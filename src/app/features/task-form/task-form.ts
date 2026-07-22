@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Task } from '../../models/task-model';
+import { PRIORITIES, Priority, Status, STATUSES, Task } from '../../models/task-model';
 import { TaskService } from '../../services/task-service';
 
 @Component({
@@ -15,6 +15,8 @@ export class TaskForm {
   private taskService = inject(TaskService);
 
   editingId: number | null = null;
+  readonly priorities = PRIORITIES;
+  readonly status = STATUSES;
 
   form = this.fb.group({
     title: ['', Validators.required],
@@ -35,7 +37,7 @@ export class TaskForm {
           description: task.description,
           dueDate: new Date(task.dueDate).toISOString().substring(0, 10),
           priority: task.priority,
-          category: task.category ?? '',
+          category: task.category ?? '-',
           status: task.status,
         });
       }
@@ -52,9 +54,9 @@ export class TaskForm {
       title: this.form.value.title ?? '',
       description: this.form.value.description ?? '',
       dueDate: new Date(this.form.value.dueDate ?? ''),
-      priority: this.form.value.priority as 'Low' | 'Medium' | 'High',
+      priority: (this.form.value.priority ?? 'Medium') as Priority,
       category: this.form.value.category ?? '',
-      status: this.form.value.status as 'Pending' | 'In Progress' | 'Completed',
+      status: (this.form.value.status ?? 'Pending') as Status
     };
 
     if (this.editingId) {
