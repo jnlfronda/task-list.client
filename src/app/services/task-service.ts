@@ -11,10 +11,15 @@ export class TaskService {
   private apiUrl = '/api/tasks';
   readonly tasks = signal<Task[]>([]);
   readonly editingTask = signal<Task | null>(null);
+  readonly isLoading = signal(false);
 
   loadTasks(): void {
-    this.http.get<Task[]>(this.apiUrl).subscribe((task) => {
-      this.tasks.set(task);
+    this.http.get<Task[]>(this.apiUrl).subscribe({
+      next: (tasks) => {
+        this.tasks.set(tasks);
+        this.isLoading.set(true);
+      },
+      error: () => this.isLoading.set(false)
     });
   }
 
