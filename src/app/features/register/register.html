@@ -11,12 +11,20 @@
         <input type="password" formControlName="password" autocomplete="new-password">
     </div>
 
+    <div>
+        <label>Confirm Password</label>
+        <input type="password" formControlName="confirmPassword" autocomplete="new-password">
+        @if (!passwordMatch && form.get('confirmPassword')?.touched) {
+            <small class="field-error">Passwords do not match.</small>
+        }
+    </div>
+
     @if (error()) {
         <p class="error">{{ error() }}</p>
     }
 
     <div class="actions">
-        <button type="submit" class="submit-button" [disabled]="form.invalid || loading()">
+        <button type="submit" class="submit-button" [disabled]="form.invalid || loading() ||!passwordMatch">
             {{ loading() ? 'Creating…' : 'Create Account' }}
         </button>
     </div>
