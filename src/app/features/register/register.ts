@@ -19,12 +19,17 @@ export class Register {
   loading = signal(false);
 
   form = this.fb.group({
-    username: ['', [Validators.required, Validators.minLength(3)]],
+    username: ['', [Validators.required, Validators.minLength(5)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', Validators.required]
   });
 
+  get passwordMatch(): boolean {
+    return this.form.value.password === this.form.value.confirmPassword;
+  }
+
   submit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid || !this.passwordMatch) return;
 
     this.loading.set(true);
     this.error.set(null);
