@@ -1,0 +1,29 @@
+<table class="task-table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Priority</th>
+            <th>Category</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (task of tasks; track task.id) {
+        <tr>
+            <td>{{ task.title }}</td>
+            <td>{{ task.description }}</td>
+            <td>{{ task.priority }}</td>
+            <td>{{ task.category || '-'}}</td>
+            <td>{{ task.dueDate | date:'MMM dd, yyyy' }}</td>
+            <td>{{ task.status }}</td>
+            <td>
+                <button type="button" (click)="edit(task)">Edit</button>
+                <button type="button" (click)="delete(task.id)">Delete</button>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

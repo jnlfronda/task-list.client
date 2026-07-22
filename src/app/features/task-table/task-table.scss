@@ -1,0 +1,55 @@
+:host {
+  .task-table {
+    width: 100%;
+    max-width: 60%;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: system-ui, sans-serif;
+
+    th,
+    td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid #e1e4e8;
+    }
+
+    thead th {
+      background-color: #eef1f5;
+      font-weight: 700;
+      border-bottom: 2px solid #d0d7de;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f6f8fa;
+    }
+
+    tbody tr:nth-child(odd) {
+      background-color: #ffffff;
+    }
+
+    tbody tr:hover {
+      background-color: #eaf2fd;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    button {
+      margin-right: 6px;
+      padding: 4px 10px;
+      border: 1px solid #d0d7de;
+      border-radius: 4px;
+      background-color: #ffffff;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #f0f0f0;
+      }
+    }
+  }
+}

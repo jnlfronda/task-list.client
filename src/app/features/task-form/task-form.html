@@ -1,0 +1,64 @@
+<form class="task-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="title">
+        <label>Title</label>
+        <input type="text" formControlName="title" placeholder="Enter your title here">
+    </div>
+
+    <div class="description">
+        <label>Description</label>
+        <textarea rows="4" formControlName="description" placeholder="Enter description here">
+    </textarea>
+    </div>
+
+    <div class="dropdown-row">
+        <div class="priority">
+            <label>Priority</label>
+            <select formControlName="priority">
+                <option value="Low">
+                    Low
+                </option>
+                <option value="Medium">
+                    Medium
+                </option>
+                <option value="High">
+                    High
+                </option>
+            </select>
+        </div>
+
+        <div class="status">
+            <label>Status</label>
+            <select formControlName="status">
+                <option value="Pending">
+                    Pending
+                </option>
+                <option value="In Progress">
+                    In Progress
+                </option>
+                <option value="Completed">
+                    Completed
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="due-date">
+        <label>Due Date</label>
+        <input type="date" formControlName="dueDate">
+    </div>
+
+    <div class="categorty">
+        <label>Category (optional)</label>
+        <input type="text" formControlName="category">
+    </div>
+
+    <div class="actions">
+        <button type="submit" class="submit-button" [disabled]="form.invalid">
+            {{ editingId ? 'Update Task' : 'Add Task' }}
+        </button>
+
+        @if (editingId) {
+        <button type="button" (click)="cancel()" class="cancel-button">Cancel</button>
+        }
+    </div>
+</form>

@@ -1,0 +1,10 @@
+<div class="task-list">
+
+    <h2>Tasks</h2>
+
+    @if (tasks().length === 0) {
+        <p>No tasks found.</p>
+    }
+
+    <app-task-table [tasks]="tasks()"></app-task-table>
+</div>
