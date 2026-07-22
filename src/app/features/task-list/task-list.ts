@@ -13,8 +13,4 @@ export class TaskList {
   private taskService = inject(TaskService);
 
   tasks = this.taskService.tasks;
-
-  ngOnInit(): void {
-    this.taskService.loadTasks();
-  }
 }

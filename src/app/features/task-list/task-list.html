@@ -3,8 +3,9 @@
     <h2>Tasks</h2>
 
     @if (tasks().length === 0) {
-        <p>No tasks found.</p>
+    <p>No tasks found.</p>
+    } @else {
+    <app-task-table [tasks]="tasks()"></app-task-table>
     }
 
-    <app-task-table [tasks]="tasks()"></app-task-table>
 </div>

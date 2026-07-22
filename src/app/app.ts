@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { TaskForm } from './features/task-form/task-form';
-import { TaskList } from './features/task-list/task-list';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [TaskForm, TaskList],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

@@ -1,0 +1,13 @@
+<div class="home">
+    <header class="home-header">
+        <h1>Task Manager</h1>
+        <div class="user-info">
+            <span>Signed in as <strong>{{ username() }}</strong></span>
+            <button type="button" (click)="logout()">Logout</button>
+        </div>
+    </header>
+
+    <app-task-form></app-task-form>
+    <hr>
+    <app-task-list></app-task-list>
+</div>
