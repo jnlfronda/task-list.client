@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth-service';
 import { TaskService } from '../../services/task-service';
 import { TaskForm } from '../task-form/task-form';
@@ -10,7 +10,7 @@ import { TaskList } from '../task-list/task-list';
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home {
+export class Home implements OnInit {
   private auth = inject(AuthService);
   private taskService = inject(TaskService);
 
