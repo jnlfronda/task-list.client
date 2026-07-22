@@ -19,8 +19,9 @@ export class TaskService {
   }
 
   addTask(task: Task): void {
-    this.http.post<Task>(this.apiUrl, task).subscribe((created) => {
-      this.tasks.update((current) => [...current, created]);
+    this.http.post<Task>(this.apiUrl, task).subscribe({
+      next: (created) => this.tasks.update((current) => [...current, created]),
+      error: (err) => console.error('Failed to add new task', err)
     });
   }
 
