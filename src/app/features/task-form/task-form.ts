@@ -20,8 +20,8 @@ export class TaskForm {
 
   form = this.fb.group({
     title: ['', Validators.required],
-    description: ['', Validators.required],
-    dueDate: ['', Validators.required],
+    description: [''],
+    dueDate: [''],
     priority: ['Medium', Validators.required],
     category: [''],
     status: ['Pending', Validators.required],
