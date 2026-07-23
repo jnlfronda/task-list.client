@@ -106,7 +106,7 @@ Persistence lives in the backend; the client only sees JSON. For completeness:
 | -------------- | ----------------- | ------------------------------------------------------- |
 | `id`           | int (PK)          |                                                         |
 | `Username`     | nvarchar(100)     | Unique                                                  |
-| `PasswordHash` | nvarchar(max)     | **Nullable** — BCrypt for local users, NULL for SSO     |
+| `PasswordHash` | nvarchar(max)     | **Nullable** — BCrypt for local users                   |
 
 ### `Tasks`
 
