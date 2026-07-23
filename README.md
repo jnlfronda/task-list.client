@@ -55,11 +55,6 @@ The backend that serves the API lives in `../task-list.server/`.
    ```
    Artifacts land in `dist/`.
 
-4. Unit tests:
-   ```powershell
-   npm test
-   ```
-
 ### Project layout
 
 ```
