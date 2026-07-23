@@ -90,9 +90,8 @@ src/app/
 **Why this over SSO:**
 - Self-contained and simple to run locally with no external identity provider needed.
 - One interceptor and one guard cover the entire client-side auth story.
-- SSO can be added later by adding a "Sign in with Microsoft/Google" button that starts an OIDC flow on the backend, without changing the storage/interceptor pattern here.
 
-**Note:** SSO is not implemented in this build. Only local accounts are supported..
+**Note:** SSO is not implemented in this build. Only local accounts are supported.
 
 ---
 
