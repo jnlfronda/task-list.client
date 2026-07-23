@@ -121,8 +121,6 @@ Persistence lives in the backend; the client only sees JSON. For completeness:
 | `Status`      | nvarchar(max) | `Pending` / `In Progress` / `Completed`  |
 | `user_id`     | int (FK)      | Scopes every task to its owner           |
 
-**Traditional vs. SSO users** share the same `Users` table, distinguished by `Provider`. Tasks link to `Users.id` regardless of how the user signed in — the client makes no distinction. The client-side [Task model](src/app/models/task-model.ts) mirrors the backend's `Tasks` columns (nullable `dueDate: Date | null`, optional `category`, etc.).
-
 Full schema details, including indexes and migrations, are in [`../task-list.server/README.md`](../task-list.server/README.md#4-database-schema).
 
 ---
