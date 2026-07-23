@@ -34,7 +34,7 @@ The backend that serves the API lives in `../task-list.server/`.
 ### Prerequisites
 
 - **Node.js ≥ 20** and **npm ≥ 10**
-- The **backend API** must be running on `http://localhost:4201`. See [`../task-list.server/README.md`](../task-list.server/README.md) for its setup.
+- The **backend API** must be running on `http://localhost:4201`. See [`../task-list.server/README.md`](https://github.com/jnlfronda/task-list.server/blob/main/README.md) for its setup.
 
 ### Steps
 
