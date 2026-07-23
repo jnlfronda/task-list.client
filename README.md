@@ -53,7 +53,6 @@ The backend that serves the API lives in `../task-list.server/`.
    ```powershell
    npm run build
    ```
-   Artifacts land in `dist/`.
 
 ### Project layout
 
