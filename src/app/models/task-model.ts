@@ -2,10 +2,10 @@ export interface Task {
   id: number;
   title: string;
   description: string;
-  dueDate: Date;
-  priority: 'Low' | 'Medium' | 'High';
+  dueDate: Date | null;
+  priority: Priority;
   category?: string;
-  status: 'Pending' | 'In Progress' | 'Completed';
+  status: Status;
 }
 
 export const PRIORITIES = ['Low', 'Medium', 'High'] as const;

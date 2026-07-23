@@ -35,7 +35,7 @@ export class TaskForm {
         this.form.setValue({
           title: task.title,
           description: task.description,
-          dueDate: new Date(task.dueDate).toISOString().substring(0, 10),
+          dueDate: task.dueDate ? new Date(task.dueDate).toISOString().substring(0, 10) : '',
           priority: task.priority,
           category: task.category ?? '-',
           status: task.status,
@@ -49,14 +49,16 @@ export class TaskForm {
       return;
     }
 
+    const dueDateValue = this.form.value.dueDate;
+
     const task: Task = {
       id: this.editingId ?? 0,
       title: this.form.value.title ?? '',
       description: this.form.value.description ?? '',
-      dueDate: new Date(this.form.value.dueDate ?? ''),
+      dueDate: dueDateValue ? new Date(dueDateValue) : null,
       priority: (this.form.value.priority ?? 'Medium') as Priority,
       category: this.form.value.category ?? '',
-      status: (this.form.value.status ?? 'Pending') as Status
+      status: (this.form.value.status ?? 'Pending') as Status,
     };
 
     if (this.editingId) {

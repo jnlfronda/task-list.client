@@ -17,7 +17,7 @@
             <td>{{ task.description }}</td>
             <td>{{ task.priority }}</td>
             <td>{{ task.category || '-'}}</td>
-            <td>{{ task.dueDate | date:'MMM dd, yyyy' }}</td>
+            <td>{{ task.dueDate ? (task.dueDate | date:'MMM dd, yyyy') : '-' }}</td>
             <td>{{ task.status }}</td>
             <td>
                 <button type="button" (click)="edit(task)">Edit</button>
