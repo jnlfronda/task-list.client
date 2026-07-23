@@ -1,59 +1,162 @@
-# TaskListClient
+# Task List Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.19.
+A full-stack personal task tracker where each user can register, log in, and manage their own tasks (create, edit, delete). Built with:
 
-## Development server
+- **Frontend:** Angular 21 (standalone components, zoneless, signals)
+- **Backend:** ASP.NET Core 8 Web API with Entity Framework Core
+- **Database:** SQL Server (Express / LocalDB)
+- **Auth:** JWT bearer tokens, BCrypt-hashed passwords
 
-To start a local development server, run:
+The two projects live in sibling folders:
 
-```bash
-ng serve
+```
+task-list.client/   # Angular SPA        <-- this repo
+task-list.server/   # ASP.NET Core Web API
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 1. About this repository
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+This is the **Angular 21 single-page application** for the Task List system. It:
 
-```bash
-ng generate component component-name
+- Handles registration, login, and logout, storing the JWT returned by the backend.
+- Sends `Authorization: Bearer <token>` on every API call via an HTTP interceptor.
+- Renders the authenticated user's tasks in a table with inline edit and delete.
+- Auto-logs the user out on any `401 Unauthorized` from the backend.
+
+The backend that serves the API lives in `../task-list.server/`.
+
+---
+
+## 2. Setup, build, and run
+
+### Prerequisites
+
+- **Node.js ≥ 20** and **npm ≥ 10**
+- The **backend API** must be running on `http://localhost:4201`. See [`../task-list.server/README.md`](../task-list.server/README.md) for its setup.
+
+### Steps
+
+1. Install dependencies:
+   ```powershell
+   npm install
+   ```
+
+2. Run the dev server (proxies `/api/*` to the backend via [src/proxy.conf.json](src/proxy.conf.json)):
+   ```powershell
+   npm start
+   ```
+   Open **http://localhost:4200/**.
+
+3. Build for production:
+   ```powershell
+   npm run build
+   ```
+   Artifacts land in `dist/`.
+
+4. Unit tests:
+   ```powershell
+   npm test
+   ```
+
+### Project layout
+
+```
+src/app/
+  app.config.ts        # HTTP client + interceptor + router providers
+  app.routes.ts        # /login, /register, /home (guarded)
+  services/            # AuthService, TaskService (both signal-based)
+  interceptors/        # JWT bearer interceptor
+  guards/              # authGuard, guestGuard
+  features/
+    login/             # login screen
+    register/          # registration screen (with password confirmation)
+    home/              # authenticated shell (form + table)
+    task-form/         # create/edit form
+    task-list/         # container that reads the shared signal
+    task-table/        # renders tasks with edit/delete actions
+  models/              # Task, Priority, Status, AuthResponse, Credentials
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## 3. Authentication mechanism
 
-## Building
+**Chosen mechanism: traditional username + password with JWT bearer tokens.**
 
-To build the project run:
+- On register/login, the server returns a JWT which the client stores in `localStorage` (`auth.token`) alongside the username (`auth.username`). Both are exposed as Angular signals in `AuthService`, so the UI (header, guards) updates reactively.
+- The [auth interceptor](src/app/interceptors/auth-interceptor.ts) attaches `Authorization: Bearer <token>` to every outgoing HTTP request when a token is present.
+- Any `401 Unauthorized` response triggers `AuthService.logout()`, which clears storage/state and redirects to `/login`.
+- Two route guards keep navigation honest:
+  - `authGuard` — blocks anonymous users from `/home`.
+  - `guestGuard` — bounces already-signed-in users away from `/login` and `/register`.
 
-```bash
-ng build
-```
+**Why this over SSO:**
+- Self-contained and simple to run locally with no external identity provider needed.
+- One interceptor and one guard cover the entire client-side auth story.
+- SSO can be added later by adding a "Sign in with Microsoft/Google" button that starts an OIDC flow on the backend, without changing the storage/interceptor pattern here.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+**SSO is not implemented in this build.** The token format issued by the backend is intentionally the same shape it would use for SSO users, so no client-side changes will be needed when SSO ships.
 
-## Running unit tests
+---
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## 4. Database schema (backend recap)
 
-```bash
-ng test
-```
+Persistence lives in the backend; the client only sees JSON. For completeness:
 
-## Running end-to-end tests
+### `Users`
 
-For end-to-end (e2e) testing, run:
+| Column         | Type              | Notes                                                   |
+| -------------- | ----------------- | ------------------------------------------------------- |
+| `id`           | int (PK)          |                                                         |
+| `Username`     | nvarchar(100)     | Unique                                                  |
+| `PasswordHash` | nvarchar(max)     | **Nullable** — BCrypt for local users, NULL for SSO     |
+| `Provider`     | nvarchar(50)      | `"Local"` (default) / `"Microsoft"` / `"Google"` / …    |
+| `ExternalId`   | nvarchar(255)     | Nullable — the SSO provider's stable user id            |
 
-```bash
-ng e2e
-```
+### `Tasks`
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+| Column        | Type          | Notes                                    |
+| ------------- | ------------- | ---------------------------------------- |
+| `id`          | int (PK)      |                                          |
+| `Title`       | nvarchar(100) | Required                                 |
+| `Description` | nvarchar(max) | Optional                                 |
+| `due_date`    | datetime2     | **Nullable**                             |
+| `Priority`    | nvarchar(max) | `Low` / `Medium` / `High`                |
+| `Category`    | nvarchar(max) | Nullable                                 |
+| `Status`      | nvarchar(max) | `Pending` / `In Progress` / `Completed`  |
+| `user_id`     | int (FK)      | Scopes every task to its owner           |
 
-## Additional Resources
+**Traditional vs. SSO users** share the same `Users` table, distinguished by `Provider`. Tasks link to `Users.id` regardless of how the user signed in — the client makes no distinction. The client-side [Task model](src/app/models/task-model.ts) mirrors the backend's `Tasks` columns (nullable `dueDate: Date | null`, optional `category`, etc.).
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Full schema details, including indexes and migrations, are in [`../task-list.server/README.md`](../task-list.server/README.md#4-database-schema).
+
+---
+
+## 5. Accessing the application
+
+There are **no default credentials** — the database ships empty.
+
+1. Start the backend (see [`../task-list.server/README.md`](../task-list.server/README.md)) and this client (`npm start`).
+2. Open **http://localhost:4200/**. Anonymous visits redirect to `/login`.
+3. Click **Register**.
+4. Enter:
+   - **Username** (≥3 characters)
+   - **Password** (≥6 characters)
+   - **Confirm Password** (must match)
+5. On success you are automatically signed in and taken to `/home`.
+6. Add a task — only **Title** is required. Description, Due Date, and Category are optional; Priority defaults to `Medium` and Status defaults to `Pending`.
+7. Use the **Edit** / **Delete** buttons in the task table to modify tasks, and the **Logout** button in the header to end the session.
+
+To sign in with an existing account, use the **Login** link on the register screen (or navigate to `/login`).
+
+---
+
+## 6. Configuring SSO providers
+
+**SSO is not implemented in the client yet.** No configuration is needed to run or test the application today.
+
+When SSO is added on the backend, the client will gain a "Sign in with Microsoft/Google" button on `/login` that redirects the browser to a backend-hosted OIDC start endpoint (e.g. `/api/auth/microsoft`). The backend performs the OIDC dance, upserts the user into the `Users` table (`Provider = "Microsoft"`, `ExternalId = <sub>`), and issues the same JWT the client already knows how to consume — so the interceptor, guards, and `AuthService` stay unchanged.
+
+Provider credentials (client IDs, secrets, callback URLs) are configured on the **backend** via `dotnet user-secrets` or environment variables. See [`../task-list.server/README.md#6-configuring-sso-providers`](../task-list.server/README.md#6-configuring-sso-providers) for the exact shape and callback URLs. There is nothing SSO-related to configure inside this Angular project.
