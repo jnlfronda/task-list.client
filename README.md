@@ -131,7 +131,7 @@ There are **no default credentials** — the database ships empty.
 2. Open **http://localhost:4200/**. Anonymous visits redirect to `/login`.
 3. Click **Register**.
 4. Enter:
-   - **Username** (≥3 characters)
+   - **Username** (≥5 characters)
    - **Password** (≥6 characters)
    - **Confirm Password** (must match)
 5. On success you are automatically signed in and taken to `/home`.
