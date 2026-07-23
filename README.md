@@ -92,7 +92,7 @@ src/app/
 - One interceptor and one guard cover the entire client-side auth story.
 - SSO can be added later by adding a "Sign in with Microsoft/Google" button that starts an OIDC flow on the backend, without changing the storage/interceptor pattern here.
 
-**SSO is not implemented in this build.** The token format issued by the backend is intentionally the same shape it would use for SSO users, so no client-side changes will be needed when SSO ships.
+**Note:** SSO is not implemented in this build. Only local accounts are supported..
 
 ---
 
@@ -107,8 +107,6 @@ Persistence lives in the backend; the client only sees JSON. For completeness:
 | `id`           | int (PK)          |                                                         |
 | `Username`     | nvarchar(100)     | Unique                                                  |
 | `PasswordHash` | nvarchar(max)     | **Nullable** — BCrypt for local users, NULL for SSO     |
-| `Provider`     | nvarchar(50)      | `"Local"` (default) / `"Microsoft"` / `"Google"` / …    |
-| `ExternalId`   | nvarchar(255)     | Nullable — the SSO provider's stable user id            |
 
 ### `Tasks`
 
@@ -147,11 +145,3 @@ There are **no default credentials** — the database ships empty.
 To sign in with an existing account, use the **Login** link on the register screen (or navigate to `/login`).
 
 ---
-
-## 6. Configuring SSO providers
-
-**SSO is not implemented in the client yet.** No configuration is needed to run or test the application today.
-
-When SSO is added on the backend, the client will gain a "Sign in with Microsoft/Google" button on `/login` that redirects the browser to a backend-hosted OIDC start endpoint (e.g. `/api/auth/microsoft`). The backend performs the OIDC dance, upserts the user into the `Users` table (`Provider = "Microsoft"`, `ExternalId = <sub>`), and issues the same JWT the client already knows how to consume — so the interceptor, guards, and `AuthService` stay unchanged.
-
-Provider credentials (client IDs, secrets, callback URLs) are configured on the **backend** via `dotnet user-secrets` or environment variables. See [`../task-list.server/README.md#6-configuring-sso-providers`](../task-list.server/README.md#6-configuring-sso-providers) for the exact shape and callback URLs. There is nothing SSO-related to configure inside this Angular project.
